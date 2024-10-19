@@ -28,10 +28,16 @@ Este repositorio contiene una implementación de microservicios para la gestión
    ```
 
 2. Construye las imágenes de Docker:
+
+   ```bash
    docker-compose build
+   ```
 
 3. Levanta los servicios:
+
+   ```bash
    docker-compose up
+   ```
 
 4. Importa los archivos JSON en POSTMAN para probar los endpoints.
 
