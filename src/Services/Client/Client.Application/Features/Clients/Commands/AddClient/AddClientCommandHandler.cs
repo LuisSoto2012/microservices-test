@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Client.Application.Features.Clients.Commands.AddClient;
 
-public class AddClientCommandHandler : IRequestHandler<AddClientCommand>
+public class AddClientCommandHandler : IRequestHandler<AddClientCommand, Domain.Entities.Client>
 {
     private readonly IClientRepository _clientRepository;
     private readonly IMapper _mapper;
@@ -19,12 +19,14 @@ public class AddClientCommandHandler : IRequestHandler<AddClientCommand>
         _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
     }
     
-    public async Task Handle(AddClientCommand request, CancellationToken cancellationToken)
+    public async Task<Domain.Entities.Client> Handle(AddClientCommand request, CancellationToken cancellationToken)
     {
         var client = _mapper.Map<Domain.Entities.Client>(request);
         
         var createdClient = await _clientRepository.AddAsync(client);
 
         await _eventBus.PublishAsync(new ClientCreatedEvent(createdClient.Id, createdClient.Name));
+
+        return createdClient;
     }
 }

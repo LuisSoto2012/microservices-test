@@ -23,10 +23,10 @@ public class AccountController : ControllerBase
     [HttpPost(Name = "AddAccount")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult> AddAccount([FromBody] AddAccountCommand command)
+    public async Task<ActionResult<Domain.Entities.Account>> AddAccount([FromBody] AddAccountCommand command)
     {
-        await _mediator.Send(command);
-        return Ok();
+        var newAccount = await _mediator.Send(command);
+        return Ok(newAccount);
     }
     
     [HttpPut(Name = "UpdateAccount")]

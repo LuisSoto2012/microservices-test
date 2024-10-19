@@ -1,46 +1,102 @@
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
+using System.Text.Json;
 
 namespace Services.IntegrationTests;
 
-public class IntegrationTest
+public class IntegrationTest : IClassFixture<WebApplicationFactory<Client.API.Program>>, 
+    IClassFixture<WebApplicationFactory<Account.API.Program>>, 
+    IClassFixture<WebApplicationFactory<Report.Service.Program>>
 {
-    private readonly HttpClient _client;
+    private readonly HttpClient _clientServiceClient;
+    private readonly HttpClient _accountServiceClient;
+    private readonly HttpClient _reportServiceClient;
 
-    public IntegrationTest()
+    public IntegrationTest(WebApplicationFactory<Client.API.Program> clientFactory,
+                                  WebApplicationFactory<Account.API.Program> accountFactory,
+                                  WebApplicationFactory<Report.Service.Program> reportFactory)
     {
-        var factory = new WebApplicationFactory<Startup>() // Asumiendo que usas ASP.NET Core
-            .WithWebHostBuilder(builder =>
-            {
-                builder.UseEnvironment("Development");
-            });
-
-        _client = factory.CreateClient();
+        _clientServiceClient = clientFactory.CreateClient();
+        _accountServiceClient = accountFactory.CreateClient();
+        _reportServiceClient = reportFactory.CreateClient();
     }
 
     [Fact]
     public async Task GenerateReport_ShouldReturnReport_WhenClientAndTransactionCreated()
     {
-        // 1. Crear un nuevo cliente
-        var clientResponse = await _client.PostAsJsonAsync("/api/client", new { /* datos del cliente */ });
+        // 1. Create client in Client Service
+        var newClient = new
+        {
+            Name = "Cliente Prueba",
+            Gender = "Male",
+            Age = 30,
+            IdentificationNumber = "123456789",
+            Address = "123 Calle Falsa",
+            Phone = "123-456-7890",
+            Password = "password123"
+        };
+        var clientResponse = await _clientServiceClient.PostAsJsonAsync("/api/v1/clients", newClient);
         clientResponse.EnsureSuccessStatusCode();
-        var clientId = await clientResponse.Content.ReadAsStringAsync();
+        var clientContent = await clientResponse.Content.ReadAsStringAsync();
+        var clientId = JsonSerializer.Deserialize<ClientResponse>(clientContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })?.Id;
 
-        // 2. Crear una nueva cuenta
-        var accountResponse = await _client.PostAsJsonAsync("/api/account", new { /* datos de la cuenta */ });
+        // 2. Create account in Account Service
+        var newAccount = new { ClientId = clientId, Type = "Corriente", Number = "01010101", InitialBalance = 1000.00m, Status = true };
+        var accountResponse = await _accountServiceClient.PostAsJsonAsync("/api/v1/accounts", newAccount);
         accountResponse.EnsureSuccessStatusCode();
+        var accountContent = await accountResponse.Content.ReadAsStringAsync();
+        var accountId = JsonSerializer.Deserialize<AccountResponse>(accountContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })?.Id;
 
-        // 3. Crear una nueva transacción
-        var transactionResponse = await _client.PostAsJsonAsync("/api/account/transactions", new { /* datos de la transacción */ });
+        // 3. Create transaction in Account Service
+        var newTransaction = new { AccountId = accountId, Amount = 100.0, Type = "Deposito" };
+        var transactionResponse = await _accountServiceClient.PostAsJsonAsync("/api/v1/transactions", newTransaction);
         transactionResponse.EnsureSuccessStatusCode();
 
-        // 4. Generar el reporte
-        var reportResponse = await _client.GetAsync($"/api/report?clientId={clientId}&startDate={startDate}&endDate={endDate}");
+        // 4. Generate report in Report Service
+        var startDate = DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd");
+        var endDate = DateTime.Now.ToString("yyyy-MM-dd");
+        var reportResponse = await _reportServiceClient.GetAsync($"/api/v1/reports/client-transactions?clientId={clientId}&startDate={startDate}&endDate={endDate}");
         reportResponse.EnsureSuccessStatusCode();
         
-        // 5. Validar el contenido del reporte
+        // 5. Validate report
         var reportContent = await reportResponse.Content.ReadAsStringAsync();
-        Assert.NotNull(reportContent);
-        // Aquí puedes agregar más validaciones según tu caso.
+        var report = JsonSerializer.Deserialize<List<ReportResponse>>(reportContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        Assert.NotNull(report);
+        Assert.NotEmpty(report); 
     }
+}
+
+public class ClientResponse
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+public class AccountResponse
+{
+    public int Id { get; set; }
+    public string Number { get; set; }
+}
+
+public class ReportResponse
+{
+    public string ClientName { get; set; }
+    public DateTime Date { get; set; }
+    public string AccountNumber { get; set; }
+    public string AccountType { get; set; }
+    public decimal InitialBalance { get; set; }
+    public decimal Amount { get; set; }
+    public decimal Balance { get; set; }
 }

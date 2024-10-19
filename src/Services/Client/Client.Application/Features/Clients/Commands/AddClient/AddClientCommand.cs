@@ -2,7 +2,7 @@ using MediatR;
 
 namespace Client.Application.Features.Clients.Commands.AddClient;
 
-public class AddClientCommand : IRequest
+public class AddClientCommand : IRequest<Domain.Entities.Client>
 {
     public string Name { get; set; }
     public string Gender { get; set; }

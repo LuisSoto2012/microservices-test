@@ -23,10 +23,10 @@ public class ClientController : ControllerBase
     [HttpPost(Name = "AddClient")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult> AddClient([FromBody] AddClientCommand command)
+    public async Task<ActionResult<Domain.Entities.Client>> AddClient([FromBody] AddClientCommand command)
     {
-        await _mediator.Send(command);
-        return Ok();
+        var newClient = await _mediator.Send(command);
+        return Ok(newClient);
     }
     
     [HttpPut(Name = "UpdateClient")]

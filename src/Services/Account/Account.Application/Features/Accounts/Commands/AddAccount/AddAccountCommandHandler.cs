@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Account.Application.Features.Accounts.Commands.AddAccount;
 
-public class AddAccountCommandHandler : IRequestHandler<AddAccountCommand>
+public class AddAccountCommandHandler : IRequestHandler<AddAccountCommand, Domain.Entities.Account>
 {
     private readonly IAccountRepository _accountRepository;
     private readonly IMapper _mapper;
@@ -15,10 +15,12 @@ public class AddAccountCommandHandler : IRequestHandler<AddAccountCommand>
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
     
-    public async Task Handle(AddAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Domain.Entities.Account> Handle(AddAccountCommand request, CancellationToken cancellationToken)
     {
         var account = _mapper.Map<Domain.Entities.Account>(request);
         
-        await _accountRepository.AddAsync(account);
+        var newAccount = await _accountRepository.AddAsync(account);
+
+        return newAccount;
     }
 }
