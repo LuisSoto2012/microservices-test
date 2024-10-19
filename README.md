@@ -34,6 +34,16 @@ Este repositorio contiene una implementación de microservicios para la gestión
    docker-compose up
 
 4. Importa los archivos JSON en POSTMAN para probar los endpoints.
-   Attempt | #1 | #2 | #3 | #4 | #5 | #6 | #7 | #8 | #9 | #10 | #11
-   --- | --- | --- | --- |--- |--- |--- |--- |--- |--- |--- |---
-   Seconds | 301 | 283 | 290 | 286 | 289 | 285 | 287 | 287 | 272 | 276 | 269
+
+## Endpoints
+
+| Método | Endpoint                    | Descripción                       |
+| ------ | --------------------------- | --------------------------------- |
+| POST   | /api/v1/clients             | Crear un nuevo cliente            |
+| GET    | /api/v1/clients             | Obtener todos los clientes        |
+| DELETE | /api/v1/clients?id={id}     | Eliminar un cliente               |
+| POST   | /api/v1/accounts            | Crear una nueva cuenta            |
+| GET    | /api/v1/accounts            | Obtener todas las cuentas         |
+| DELETE | /api/v1/accounts?id={id}    | Eliminar una cuenta               |
+| GET    | /api/v1/reports             | Generar y obtener el reporte      |
+| GET    | /api/v1/client-transactions | Obtener transacciones por cliente |
