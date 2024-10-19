@@ -43,13 +43,18 @@ Este repositorio contiene una implementación de microservicios para la gestión
 
 ## Endpoints
 
-| Método | Endpoint                    | Descripción                       |
-| ------ | --------------------------- | --------------------------------- |
-| POST   | /api/v1/clients             | Crear un nuevo cliente            |
-| GET    | /api/v1/clients             | Obtener todos los clientes        |
-| DELETE | /api/v1/clients?id={id}     | Eliminar un cliente               |
-| POST   | /api/v1/accounts            | Crear una nueva cuenta            |
-| GET    | /api/v1/accounts            | Obtener todas las cuentas         |
-| DELETE | /api/v1/accounts?id={id}    | Eliminar una cuenta               |
-| GET    | /api/v1/reports             | Generar y obtener el reporte      |
-| GET    | /api/v1/client-transactions | Obtener transacciones por cliente |
+| Método | Endpoint                     | Descripción                       |
+| ------ | ---------------------------- | --------------------------------- |
+| POST   | /api/v1/clients              | Crear un nuevo cliente            |
+| GET    | /api/v1/clients              | Obtener todos los clientes        |
+| PUT    | /api/v1/clients              | Actualizar un cliente             |
+| DELETE | /api/v1/clients?id={id}      | Eliminar un cliente               |
+| POST   | /api/v1/accounts             | Crear una nueva cuenta            |
+| GET    | /api/v1/accounts             | Obtener todas las cuentas         |
+| PUT    | /api/v1/accounts             | Actualizar una cuenta             |
+| DELETE | /api/v1/accounts?id={id}     | Eliminar una cuenta               |
+| POST   | /api/v1/transactions         | Crear una nueva transacción       |
+| GET    | /api/v1/transactions         | Obtener todas las transacciones   |
+| PUT    | /api/v1/transactions         | Actualizar una transacción        |
+| DELETE | /api/v1/transactions?id={id} | Eliminar una transacción          |
+| GET    | /api/v1/client-transactions  | Obtener transacciones por cliente |
