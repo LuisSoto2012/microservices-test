@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  account-service:
+    build:
+      context: ./account
+      dockerfile: Dockerfile
+    ports:
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  client-service:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "5002:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  report-service:
+    build:
+      context: ./report
+      dockerfile: Dockerfile
+    ports:
+      - "5003:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "15672:15672" # Interfaz de administración
+      - "5672:5672"   # Puerto de RabbitMQ
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  sql-server:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Passw0rd123
+    ports:
+      - "1401:1433"  # Cambiado a puerto 1401 en el host
+
+networks:
+  default:
+    driver: bridge

@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  account-service:
+    build:
+      context: .
+      dockerfile: src/Services/Account/Account.API/Dockerfile
+    ports:
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__AccountConnectionString=Server=sql-server;Database=accountdb;User Id=sa;Password=Passw0rd123;;TrustServerCertificate=true
+      - RabbitMQ__ConnectionString=amqp://guest:guest@rabbitmq:5672
+    restart: always
+
+  client-service:
+    build:
+      context: .
+      dockerfile: src/Services/Client/Client.API/Dockerfile
+    ports:
+      - "5002:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ClientConnectionString=Server=sql-server;Database=clientdb;User Id=sa;Password=Passw0rd123;;TrustServerCertificate=true
+      - RabbitMQ__ConnectionString=amqp://guest:guest@rabbitmq:5672
+    restart: always
+
+  report-service:
+    build:
+      context: .
+      dockerfile: src/Services/Report/Dockerfile
+    ports:
+      - "5003:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQ__ConnectionString=amqp://guest:guest@rabbitmq:5672
+    restart: always
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "15672:15672" # Interfaz de administración
+      - "5672:5672"   # Puerto de RabbitMQ
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    restart: always
+
+  sql-server:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Passw0rd123
+    ports:
+      - "1401:1433"  # Cambiado a puerto 1401 en el host
+    restart: always
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - "9000:9000"  # Exponer la interfaz web de Portainer en el puerto 9000
+    restart: always
+
+volumes:
+  portainer_data:
+
+networks:
+  default:
+    driver: bridge
