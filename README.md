@@ -58,3 +58,14 @@ Este repositorio contiene una implementación de microservicios para la gestión
 | PUT    | /api/v1/transactions         | Actualizar una transacción        |
 | DELETE | /api/v1/transactions?id={id} | Eliminar una transacción          |
 | GET    | /api/v1/client-transactions  | Obtener transacciones por cliente |
+
+## Contenedores
+
+| Contenedor                           | Estado  | Puerto |
+| ------------------------------------ | ------- | ------ |
+| microservices-test_portainer_1       | running | 9000   |
+| microservices-test_rabbitmq_1        | running | 15672  |
+| microservices-test_client_service_1  | running | 5002   |
+| microservices-test_account_service_1 | running | 5001   |
+| microservices-test_report_service_1  | running | 5003   |
+| microservices-test_sql-server_1      | running | 1401   |
