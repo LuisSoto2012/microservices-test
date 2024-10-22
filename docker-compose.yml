@@ -5,35 +5,50 @@ services:
     build:
       context: .
       dockerfile: src/Services/Account/Account.API/Dockerfile
+      args:
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
     ports:
       - "5001:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__AccountConnectionString=Server=sql-server;Database=accountdb;User Id=sa;Password=Passw0rd123;;TrustServerCertificate=true
       - RabbitMQ__ConnectionString=amqp://guest:guest@rabbitmq:5672
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy}
     restart: always
 
   client-service:
     build:
       context: .
       dockerfile: src/Services/Client/Client.API/Dockerfile
+      args:
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
     ports:
       - "5002:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__ClientConnectionString=Server=sql-server;Database=clientdb;User Id=sa;Password=Passw0rd123;;TrustServerCertificate=true
       - RabbitMQ__ConnectionString=amqp://guest:guest@rabbitmq:5672
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy}
     restart: always
 
   report-service:
     build:
       context: .
       dockerfile: src/Services/Report/Dockerfile
+      args:
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
     ports:
       - "5003:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - RabbitMQ__ConnectionString=amqp://guest:guest@rabbitmq:5672
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy}
     restart: always
 
   rabbitmq:

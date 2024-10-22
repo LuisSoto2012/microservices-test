@@ -27,6 +27,20 @@ Este repositorio contiene una implementación de microservicios para la gestión
    cd microservices-test
    ```
 
+2. Si estás detrás de un proxy, configura las variables de entorno para el proxy:
+
+	```bash
+	export http_proxy=http://proxy.empleador.com:8080
+	export https_proxy=https://proxy.empleador.com:8080
+	```
+	
+	Si tu proxy requiere autenticación, incluye el usuario y contraseña en las variables de entorno:
+	
+	```bash
+	export http_proxy=http://username:password@proxy.empleador.com:8080
+	export https_proxy=https://username:password@proxy.empleador.com:8080
+	```
+
 2. Construye las imágenes de Docker:
 
    ```bash
@@ -69,3 +83,13 @@ Este repositorio contiene una implementación de microservicios para la gestión
 | microservices-test_account_service_1 | running | 5001   |
 | microservices-test_report_service_1  | running | 5003   |
 | microservices-test_sql-server_1      | running | 1401   |
+
+### Configuración de proxy (opcional)
+
+Si la red requiere acceso a través de un proxy, por favor configure las siguientes variables de entorno antes de ejecutar `docker-compose`:
+
+```bash
+export http_proxy=http://proxy.empleador.com:8080
+export https_proxy=https://proxy.empleador.com:8080
+docker-compose up
+```
