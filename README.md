@@ -84,6 +84,15 @@ Este repositorio contiene una implementación de microservicios para la gestión
 | microservices-test_report_service_1  | running | 5003   |
 | microservices-test_sql-server_1      | running | 1401   |
 
+## Solución de Errores Comunes
+
+### Error NU1301
+
+**NU1301: Unable to load the service index for source https://api.nuget.org/v3/index.json**, generalmente ocurre cuando hay problemas de red o al acceder a la fuente de paquetes NuGet.
+
+**Verifica la conexión a internet:**
+Asegúrate de que el proceso de compilación de Docker tenga acceso a internet. Si estás trabajando detrás de un proxy o firewall, es posible que necesites configurar Docker para usar tu configuración de proxy.
+
 ### Configuración de proxy (opcional)
 
 Si la red requiere acceso a través de un proxy, por favor configure las siguientes variables de entorno antes de ejecutar `docker-compose`:
@@ -92,4 +101,11 @@ Si la red requiere acceso a través de un proxy, por favor configure las siguien
 export http_proxy=http://proxy.empleador.com:8080
 export https_proxy=https://proxy.empleador.com:8080
 docker-compose up
+```
+
+Si tu proxy requiere autenticación, incluye el usuario y contraseña en las variables de entorno:
+	
+```bash
+export http_proxy=http://username:password@proxy.empleador.com:8080
+export https_proxy=https://username:password@proxy.empleador.com:8080
 ```
